@@ -21,7 +21,7 @@ public class ForgedEnchantmentsMod {
 
         BlockInit.VANILLA_BLOCKS.register(modBus);
         ItemInit.VANILLA_ITEMS.register(modBus);
-        GlobalLootModifierSerializerInit.LOOT_MODIFIER_SERIALIZERS.register(modBus);
+        GlobalLootModifierSerializerInit.GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(modBus);
         RecipeSerializerInit.RECIPE_SERIALIZERS.register(modBus);
 
         ClientConfig.register();

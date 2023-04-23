@@ -4,15 +4,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.sizableshrimp.forgedenchantments.ForgedEnchantmentsMod;
 import me.sizableshrimp.forgedenchantments.item.ForgedEnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public class ForgedEnchantmentIngredient extends Ingredient {
@@ -20,14 +20,14 @@ public class ForgedEnchantmentIngredient extends Ingredient {
     private final int level;
 
     public ForgedEnchantmentIngredient(String type, int level) {
-        super(Stream.of(new Ingredient.SingleItemList(new ItemStack(Items.ENCHANTED_BOOK))));
+        super(Stream.of(new Ingredient.ItemValue(new ItemStack(Items.ENCHANTED_BOOK))));
         this.type = type;
         this.level = level;
     }
 
     @Override
     public boolean test(@Nullable ItemStack stack) {
-        if (stack == null || stack.getItem() != Items.ENCHANTED_BOOK || !stack.hasTag())
+        if (stack == null || !stack.is(Items.ENCHANTED_BOOK) || !stack.hasTag())
             return false;
 
         return ForgedEnchantedBookItem.getLevel(stack) == this.level && ForgedEnchantedBookItem.getType(stack).equals(this.type);
@@ -61,17 +61,17 @@ public class ForgedEnchantmentIngredient extends Ingredient {
         private Serializer() {}
 
         @Override
-        public ForgedEnchantmentIngredient parse(PacketBuffer buffer) {
+        public ForgedEnchantmentIngredient parse(FriendlyByteBuf buffer) {
             return new ForgedEnchantmentIngredient(buffer.readUtf(), buffer.readVarInt());
         }
 
         @Override
         public ForgedEnchantmentIngredient parse(JsonObject json) {
-            return new ForgedEnchantmentIngredient(JSONUtils.getAsString(json, "upgrade_type"), JSONUtils.getAsInt(json, "level"));
+            return new ForgedEnchantmentIngredient(GsonHelper.getAsString(json, "upgrade_type"), GsonHelper.getAsInt(json, "level"));
         }
 
         @Override
-        public void write(PacketBuffer buffer, ForgedEnchantmentIngredient ingredient) {
+        public void write(FriendlyByteBuf buffer, ForgedEnchantmentIngredient ingredient) {
             buffer.writeUtf(ingredient.type);
             buffer.writeVarInt(ingredient.level);
         }

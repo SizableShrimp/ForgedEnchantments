@@ -3,20 +3,20 @@ package me.sizableshrimp.forgedenchantments.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapelessRecipe;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 
 public class ForgedEnchantmentShapelessRecipeSerializer extends ShapelessRecipe.Serializer {
     @Override
     public ShapelessRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-        String s = JSONUtils.getAsString(json, "group", "");
-        NonNullList<Ingredient> nonnulllist = itemsFromJson(JSONUtils.getAsJsonArray(json, "ingredients"));
+        String s = GsonHelper.getAsString(json, "group", "");
+        NonNullList<Ingredient> nonnulllist = itemsFromJson(GsonHelper.getAsJsonArray(json, "ingredients"));
+
         if (nonnulllist.isEmpty()) {
             throw new JsonParseException("No ingredients for shapeless recipe");
         } else if (nonnulllist.size() > 3 * 3) {
@@ -28,8 +28,8 @@ public class ForgedEnchantmentShapelessRecipeSerializer extends ShapelessRecipe.
     }
 
     @Override
-    public ShapelessRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
-         String s = buffer.readUtf(32767);
+    public ShapelessRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+         String s = buffer.readUtf();
          int i = buffer.readVarInt();
          NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i, Ingredient.EMPTY);
 
@@ -45,10 +45,7 @@ public class ForgedEnchantmentShapelessRecipeSerializer extends ShapelessRecipe.
         NonNullList<Ingredient> nonnulllist = NonNullList.create();
 
         for (int i = 0; i < pIngredientArray.size(); ++i) {
-            Ingredient ingredient = Ingredient.fromJson(pIngredientArray.get(i));
-            if (!ingredient.isEmpty()) {
-                nonnulllist.add(ingredient);
-            }
+            nonnulllist.add(Ingredient.fromJson(pIngredientArray.get(i)));
         }
 
         return nonnulllist;

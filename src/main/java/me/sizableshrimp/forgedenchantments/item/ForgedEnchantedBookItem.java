@@ -1,15 +1,19 @@
 package me.sizableshrimp.forgedenchantments.item;
 
 import me.sizableshrimp.forgedenchantments.client.ClientItemGroupFiller;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponent;
+import me.sizableshrimp.forgedenchantments.client.ForgedEnchantedBookBEWLR;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+
+import java.util.function.Consumer;
 
 public class ForgedEnchantedBookItem extends EnchantedBookItem {
     public ForgedEnchantedBookItem(Properties properties) {
@@ -17,7 +21,7 @@ public class ForgedEnchantedBookItem extends EnchantedBookItem {
     }
 
     public static boolean isForgedEnchantment(ItemStack itemStack) {
-        return itemStack.hasTag() && itemStack.getTag().contains("UpgradeType", Constants.NBT.TAG_STRING);
+        return itemStack.hasTag() && itemStack.getTag().contains("UpgradeType", Tag.TAG_STRING);
     }
 
     public static String getType(ItemStack itemStack) {
@@ -25,10 +29,10 @@ public class ForgedEnchantedBookItem extends EnchantedBookItem {
     }
 
     public static int getLevel(ItemStack itemStack) {
-        return itemStack.hasTag() && itemStack.getTag().contains("UpgradeLevel", Constants.NBT.TAG_INT) ? itemStack.getTag().getInt("UpgradeLevel") : -1;
+        return itemStack.hasTag() && itemStack.getTag().contains("UpgradeLevel", Tag.TAG_INT) ? itemStack.getTag().getInt("UpgradeLevel") : -1;
     }
 
-    public static void copyStyle(ItemStack from, TextComponent to) {
+    public static void copyStyle(ItemStack from, MutableComponent to) {
         to.setStyle(from.getItem().getName(from).getStyle());
     }
 
@@ -38,16 +42,31 @@ public class ForgedEnchantedBookItem extends EnchantedBookItem {
     }
 
     @Override
-    public ITextComponent getName(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains("UpgradeName", Constants.NBT.TAG_STRING))
-            return ITextComponent.Serializer.fromJson(stack.getTag().getString("UpgradeName"));
+    public Component getName(ItemStack stack) {
+        if (stack.hasTag() && stack.getTag().contains("UpgradeName", Tag.TAG_STRING))
+            return Component.Serializer.fromJson(stack.getTag().getString("UpgradeName"));
 
         return super.getName(stack);
     }
 
     @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if (FMLEnvironment.dist == Dist.CLIENT)
             ClientItemGroupFiller.fillEnchantedBooks(group, items);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private ForgedEnchantedBookBEWLR renderer;
+
+            @Override
+            public ForgedEnchantedBookBEWLR getCustomRenderer() {
+                if (this.renderer == null)
+                    this.renderer = new ForgedEnchantedBookBEWLR();
+
+                return this.renderer;
+            }
+        });
     }
 }

@@ -6,20 +6,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraftforge.common.crafting.CraftingHelper;
 
 import java.util.Map;
@@ -28,9 +27,9 @@ import java.util.Set;
 public class ForgedEnchantmentShapedRecipeSerializer extends ShapedRecipe.Serializer {
     @Override
     public ShapedRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-        String s = JSONUtils.getAsString(json, "group", "");
-        Map<String, Ingredient> map = keyFromJson(JSONUtils.getAsJsonObject(json, "key"));
-        String[] astring = shrink(patternFromJson(JSONUtils.getAsJsonArray(json, "pattern")));
+        String s = GsonHelper.getAsString(json, "group", "");
+        Map<String, Ingredient> map = keyFromJson(GsonHelper.getAsJsonObject(json, "key"));
+        String[] astring = shrink(patternFromJson(GsonHelper.getAsJsonArray(json, "pattern")));
         int i = astring[0].length();
         int j = astring.length;
         NonNullList<Ingredient> nonnulllist = dissolvePattern(astring, map, i, j);
@@ -40,10 +39,10 @@ public class ForgedEnchantmentShapedRecipeSerializer extends ShapedRecipe.Serial
     }
 
     @Override
-    public ShapedRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+    public ShapedRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         int i = buffer.readVarInt();
         int j = buffer.readVarInt();
-        String s = buffer.readUtf(32767);
+        String s = buffer.readUtf();
         NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i * j, Ingredient.EMPTY);
 
         for (int k = 0; k < nonnulllist.size(); ++k) {
@@ -56,24 +55,24 @@ public class ForgedEnchantmentShapedRecipeSerializer extends ShapedRecipe.Serial
 
     @SuppressWarnings("deprecation")
     static ItemStack getItemStack(JsonObject json) {
-        JsonObject result = JSONUtils.getAsJsonObject(json, "result");
+        JsonObject result = GsonHelper.getAsJsonObject(json, "result");
         if (!result.has("item"))
             result.addProperty("item", "minecraft:enchanted_book");
         ItemStack itemstack = CraftingHelper.getItemStack(result, true);
 
-        String type = JSONUtils.getAsString(result, "upgrade_type");
-        int upgradeLevel = JSONUtils.getAsInt(result, "level");
-        CompoundNBT tag = itemstack.getOrCreateTag();
+        String type = GsonHelper.getAsString(result, "upgrade_type");
+        int upgradeLevel = GsonHelper.getAsInt(result, "level");
+        CompoundTag tag = itemstack.getOrCreateTag();
         tag.putString("UpgradeType", type);
         tag.putInt("UpgradeLevel", upgradeLevel);
 
-        for (JsonElement enchantmentJson : JSONUtils.getAsJsonArray(result, "enchantments")) {
-            JsonObject enchantmentJsonObject = JSONUtils.convertToJsonObject(enchantmentJson, "enchantment");
-            String enchantmentId = JSONUtils.getAsString(enchantmentJsonObject, "id");
+        for (JsonElement enchantmentJson : GsonHelper.getAsJsonArray(result, "enchantments")) {
+            JsonObject enchantmentJsonObject = GsonHelper.convertToJsonObject(enchantmentJson, "enchantment");
+            String enchantmentId = GsonHelper.getAsString(enchantmentJsonObject, "id");
             Enchantment enchantment = Registry.ENCHANTMENT.getOptional(new ResourceLocation(enchantmentId)).orElseThrow(() -> new JsonSyntaxException("Unknown item '" + enchantmentId + "'"));
             int level = enchantmentJsonObject.getAsJsonPrimitive("level").getAsInt();
 
-            EnchantedBookItem.addEnchantment(itemstack, new EnchantmentData(enchantment, level));
+            EnchantedBookItem.addEnchantment(itemstack, new EnchantmentInstance(enchantment, level));
         }
 
         // String modelId = JSONUtils.getAsString(result, "model", "");
@@ -83,11 +82,11 @@ public class ForgedEnchantmentShapedRecipeSerializer extends ShapedRecipe.Serial
         // }
 
         if (result.has("name")) {
-            IFormattableTextComponent name = IFormattableTextComponent.Serializer.fromJson(result.get("name"));
-            tag.putString("UpgradeName", IFormattableTextComponent.Serializer.toJson(name));
+            MutableComponent name = MutableComponent.Serializer.fromJson(result.get("name"));
+            tag.putString("UpgradeName", MutableComponent.Serializer.toJson(name));
         }
 
-        tag.putBoolean("Glint", JSONUtils.getAsBoolean(result, "glint", false));
+        tag.putBoolean("Glint", GsonHelper.getAsBoolean(result, "glint", false));
 
         return itemstack;
     }
@@ -176,7 +175,7 @@ public class ForgedEnchantmentShapedRecipeSerializer extends ShapedRecipe.Serial
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
         } else {
             for (int i = 0; i < astring.length; ++i) {
-                String s = JSONUtils.convertToString(pPatternArray.get(i), "pattern[" + i + "]");
+                String s = GsonHelper.convertToString(pPatternArray.get(i), "pattern[" + i + "]");
                 if (s.length() > 3) {
                     throw new JsonSyntaxException("Invalid pattern: too many columns, " + 3 + " is maximum");
                 }
@@ -192,10 +191,7 @@ public class ForgedEnchantmentShapedRecipeSerializer extends ShapedRecipe.Serial
         }
     }
 
-    /**
-     * Returns a key json object as a Java HashMap.
-     */
-    private static Map<String, Ingredient> keyFromJson(JsonObject pKeyEntry) {
+    static Map<String, Ingredient> keyFromJson(JsonObject pKeyEntry) {
         Map<String, Ingredient> map = Maps.newHashMap();
 
         for (Map.Entry<String, JsonElement> entry : pKeyEntry.entrySet()) {

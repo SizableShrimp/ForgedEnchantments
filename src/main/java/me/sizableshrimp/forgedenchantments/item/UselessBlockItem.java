@@ -1,11 +1,10 @@
 package me.sizableshrimp.forgedenchantments.item;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import org.jetbrains.annotations.Nullable;
 
 public class UselessBlockItem extends BlockItem {
     public UselessBlockItem(Block block, Properties properties) {
@@ -14,7 +13,7 @@ public class UselessBlockItem extends BlockItem {
 
     @Nullable
     @Override
-    protected BlockState getPlacementState(BlockItemUseContext context) {
+    protected BlockState getPlacementState(BlockPlaceContext context) {
         return null;
     }
 }

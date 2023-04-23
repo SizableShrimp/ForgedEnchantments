@@ -2,11 +2,9 @@ package me.sizableshrimp.forgedenchantments.client;
 
 import com.electronwill.nightconfig.core.Config;
 import me.sizableshrimp.forgedenchantments.ForgedEnchantmentsMod;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -15,8 +13,8 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = ForgedEnchantmentsMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientModEvents {
     @SubscribeEvent
-    public static void onModelRegistry(ModelRegistryEvent event) {
-        ModelLoader.addSpecialModel(ForgedEnchantmentISTER.DEFAULT_MODEL);
+    public static void onModelRegisterAdditional(ModelEvent.RegisterAdditional event) {
+        event.register(ForgedEnchantedBookBEWLR.DEFAULT_MODEL);
 
         // for (String filter : ClientConfig.INSTANCE.modelSearchPaths.get()) {
         //     ResourceLocation baseLocation = new ResourceLocation(filter);
@@ -32,7 +30,7 @@ public class ClientModEvents {
         //                     foundPath = foundPath.substring(5);
         //                 }
         //             }
-        //             ModelLoader.addSpecialModel(new ModelResourceLocation(new ResourceLocation(baseLocation.getNamespace(), foundPath), "inventory"));
+        //             event.register(new ModelResourceLocation(new ResourceLocation(baseLocation.getNamespace(), foundPath), "inventory"));
         //         }
         //     }
         // }
@@ -44,7 +42,7 @@ public class ClientModEvents {
                 for (Map.Entry<String, Object> levelEntry : levelMappings.valueMap().entrySet()) {
                     if (levelEntry.getValue() instanceof String) {
                         String modelLoc = (String) levelEntry.getValue();
-                        ModelLoader.addSpecialModel(new ModelResourceLocation(modelLoc));
+                        event.register(new ModelResourceLocation(modelLoc));
                     }
                 }
             }

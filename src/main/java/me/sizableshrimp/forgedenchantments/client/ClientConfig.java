@@ -3,14 +3,14 @@ package me.sizableshrimp.forgedenchantments.client;
 import com.electronwill.nightconfig.core.Config;
 import com.google.common.collect.ImmutableList;
 import me.sizableshrimp.forgedenchantments.ForgedEnchantmentsMod;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.util.ResourceLocationException;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.ResourceLocationException;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 public class ClientConfig {

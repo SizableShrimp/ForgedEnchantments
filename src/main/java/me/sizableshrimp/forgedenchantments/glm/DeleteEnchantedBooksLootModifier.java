@@ -1,40 +1,33 @@
 package me.sizableshrimp.forgedenchantments.glm;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.sizableshrimp.forgedenchantments.item.ForgedEnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
-
-import javax.annotation.Nonnull;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public class DeleteEnchantedBooksLootModifier extends LootModifier {
-    protected DeleteEnchantedBooksLootModifier(ILootCondition[] conditions) {
+    public static final Codec<DeleteEnchantedBooksLootModifier> CODEC = RecordCodecBuilder.create(instance -> codecStart(instance).apply(instance, DeleteEnchantedBooksLootModifier::new));
+
+    private DeleteEnchantedBooksLootModifier(LootItemCondition[] conditions) {
         super(conditions);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+    protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         generatedLoot.removeIf(itemStack -> !ForgedEnchantedBookItem.isForgedEnchantment(itemStack));
 
         return generatedLoot;
     }
 
-    public static class Serializer extends GlobalLootModifierSerializer<DeleteEnchantedBooksLootModifier> {
-        @Override
-        public DeleteEnchantedBooksLootModifier read(ResourceLocation location, JsonObject json, ILootCondition[] lootConditions) {
-            return new DeleteEnchantedBooksLootModifier(lootConditions);
-        }
-
-        @Override
-        public JsonObject write(DeleteEnchantedBooksLootModifier instance) {
-            return this.makeConditions(instance.conditions);
-        }
+    @Override
+    public Codec<? extends IGlobalLootModifier> codec() {
+        return CODEC;
     }
 }
