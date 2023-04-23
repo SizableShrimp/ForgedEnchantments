@@ -36,7 +36,8 @@ public class ClientConfig {
         //         .define("modelSearchPaths", ImmutableList.of(), o -> o instanceof List);
 
         Config defaultModelMappings = Config.inMemory();
-        defaultModelMappings.add(ImmutableList.of("example", "1"), "minecraft:apple#inventory");
+        defaultModelMappings.add(ImmutableList.of("armor_protection", "1"), "forged_enchantments:armor_blue#inventory");
+        defaultModelMappings.add(ImmutableList.of("armor_protection", "2"), "forged_enchantments:armor_green#inventory");
         this.modelMappings = builder
                 .comment("A mapping of upgrade types and levels to their model path. Format is [modelMappings.(upgrade type)] (level) = \"(model)\"",
                         "NOTE: You must restart the game to add new models; otherwise, they will not load and show as purple/black.")
