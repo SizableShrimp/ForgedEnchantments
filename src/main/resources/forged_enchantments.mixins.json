@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "me.sizableshrimp.forgedenchantments.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "${mod_id}.refmap.json",
+  "mixins": [
+    "RepairContainerMixin"
+  ],
+  "client": [],
+  "minVersion": "0.8"
+}

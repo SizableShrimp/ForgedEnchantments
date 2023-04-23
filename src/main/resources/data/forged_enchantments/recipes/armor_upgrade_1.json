@@ -1,0 +1,35 @@
+{
+  "type": "forged_enchantments:forged_enchantment_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond_block"
+    },
+    {
+      "item": "minecraft:diamond_block"
+    },
+    {
+      "item": "minecraft:netherite_block"
+    },
+    {
+      "item": "minecraft:netherite_block"
+    },
+    {
+      "tag": "forged_enchantments:diamond_armor"
+    }
+  ],
+  "result": {
+    "name": {
+      "text": "Armor Upgrade",
+      "color": "blue"
+    },
+    "upgrade_type": "armor_protection",
+    "level": 1,
+    "glint": false,
+    "enchantments": [
+      {
+        "id": "minecraft:protection",
+        "level": 1
+      }
+    ]
+  }
+}
