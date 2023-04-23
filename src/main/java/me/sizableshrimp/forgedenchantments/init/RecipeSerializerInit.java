@@ -1,8 +1,8 @@
 package me.sizableshrimp.forgedenchantments.init;
 
+import me.sizableshrimp.forgedenchantments.ForgedEnchantmentsMod;
 import me.sizableshrimp.forgedenchantments.recipe.ForgedEnchantmentShapedRecipeSerializer;
 import me.sizableshrimp.forgedenchantments.recipe.ForgedEnchantmentShapelessRecipeSerializer;
-import me.sizableshrimp.forgedenchantments.ForgedEnchantmentsMod;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

@@ -2,13 +2,13 @@ package me.sizableshrimp.forgedenchantments.item;
 
 import me.sizableshrimp.forgedenchantments.client.ClientItemGroupFiller;
 import me.sizableshrimp.forgedenchantments.client.ForgedEnchantedBookBEWLR;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.fml.loading.FMLEnvironment;

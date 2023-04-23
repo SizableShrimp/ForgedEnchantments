@@ -1,8 +1,8 @@
 package me.sizableshrimp.forgedenchantments.init;
 
 import me.sizableshrimp.forgedenchantments.block.ForgedEnchantingTableBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.registries.DeferredRegister;

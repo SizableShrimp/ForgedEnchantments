@@ -2,20 +2,18 @@ package me.sizableshrimp.forgedenchantments.events;
 
 import me.sizableshrimp.forgedenchantments.ForgedEnchantmentsMod;
 import me.sizableshrimp.forgedenchantments.item.ForgedEnchantedBookItem;
-import me.sizableshrimp.forgedenchantments.recipe.RecipeUtil;
+import me.sizableshrimp.forgedenchantments.util.ForgedEnchantmentUtil;
+import me.sizableshrimp.forgedenchantments.util.RecipeUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = ForgedEnchantmentsMod.MODID)
 public class CommonForgeEvents {
@@ -50,8 +48,8 @@ public class CommonForgeEvents {
 
     private static void mergeForgedUpgrades(AnvilUpdateEvent event, ItemStack left, ItemStack right, String upgradeType, int upgradeLevel) {
         left = left.copy();
-        Map<Enchantment, Integer> leftEnchantments = EnchantmentHelper.getEnchantments(left);
-        Map<Enchantment, Integer> rightEnchantments = EnchantmentHelper.getEnchantments(right);
+        var leftEnchantments = ForgedEnchantmentUtil.getEnchantmentsMap(left);
+        var rightEnchantments = ForgedEnchantmentUtil.getEnchantmentsMap(right);
         boolean rightEnchantedBook = true; // right.is(Items.ENCHANTED_BOOK) && !rightEnchantments.isEmpty();
         boolean flag2 = false;
         boolean flag3 = false;
@@ -60,7 +58,7 @@ public class CommonForgeEvents {
         for (Enchantment enchantment1 : rightEnchantments.keySet()) {
             if (enchantment1 != null) {
                 int i2 = leftEnchantments.getOrDefault(enchantment1, 0);
-                int j2 = rightEnchantments.get(enchantment1);
+                int j2 = rightEnchantments.getInt(enchantment1);
                 j2 = i2 == j2 ? j2 + 1 : Math.max(j2, i2);
                 boolean flag1 = enchantment1.canEnchant(left);
                 if (event.getPlayer().getAbilities().instabuild || left.is(Items.ENCHANTED_BOOK)) {
@@ -166,7 +164,7 @@ public class CommonForgeEvents {
             }
 
             upgradedStack.setRepairCost(k2);
-            EnchantmentHelper.setEnchantments(leftEnchantments, upgradedStack);
+            ForgedEnchantmentUtil.setEnchantmentsMap(leftEnchantments, upgradedStack);
             event.setOutput(upgradedStack);
         }
     }
