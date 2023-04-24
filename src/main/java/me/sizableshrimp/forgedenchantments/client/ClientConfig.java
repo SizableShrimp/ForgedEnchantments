@@ -54,17 +54,13 @@ public class ClientConfig {
     }
 
     private boolean validateModelMappings(Object obj) {
-        if (!(obj instanceof Config))
+        if (!(obj instanceof Config config))
             return false;
-
-        Config config = (Config) obj;
 
         for (Map.Entry<String, Object> entry : config.valueMap().entrySet()) {
             String upgradeType = entry.getKey();
 
-            if (entry.getValue() instanceof Config) {
-                Config levelMappings = (Config) entry.getValue();
-
+            if (entry.getValue() instanceof Config levelMappings) {
                 for (Map.Entry<String, Object> levelEntry : levelMappings.valueMap().entrySet()) {
                     int level;
                     try {
@@ -74,9 +70,9 @@ public class ClientConfig {
                         return false;
                     }
 
-                    if (levelEntry.getValue() instanceof String) {
+                    if (levelEntry.getValue() instanceof String modelStr) {
                         try {
-                            new ModelResourceLocation((String) levelEntry.getValue());
+                            new ModelResourceLocation(modelStr);
                         } catch (ResourceLocationException e) {
                             ForgedEnchantmentsMod.LOGGER.warn("Invalid entry \"{}\" for upgrade type \"{}\" level {} in client config; not a valid resource location",
                                     levelEntry.getValue(), upgradeType, level);

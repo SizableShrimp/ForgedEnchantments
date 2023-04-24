@@ -28,8 +28,8 @@ public class ClientItemGroupFiller {
         List<ItemStack> toAdd = new ArrayList<>();
 
         for (Recipe<?> recipe : minecraft.level.getRecipeManager().getRecipes()) {
-            if (recipe instanceof IForgedRecipe) {
-                ItemStack result = recipe.getResultItem();
+            if (recipe instanceof IForgedRecipe forgedRecipe) {
+                ItemStack result = forgedRecipe.getResultItem();
                 var enchantments = ForgedEnchantmentUtil.getEnchantmentsMap(result);
                 boolean add = addAll;
                 if (!add && enchantments.size() == 1) {

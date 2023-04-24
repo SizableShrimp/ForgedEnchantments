@@ -36,12 +36,9 @@ public class ClientModEvents {
         // }
 
         for (Map.Entry<String, Object> entry : ClientConfig.INSTANCE.modelMappings.get().valueMap().entrySet()) {
-            if (entry.getValue() instanceof Config) {
-                Config levelMappings = (Config) entry.getValue();
-
+            if (entry.getValue() instanceof Config levelMappings) {
                 for (Map.Entry<String, Object> levelEntry : levelMappings.valueMap().entrySet()) {
-                    if (levelEntry.getValue() instanceof String) {
-                        String modelLoc = (String) levelEntry.getValue();
+                    if (levelEntry.getValue() instanceof String modelLoc) {
                         event.register(new ModelResourceLocation(modelLoc));
                     }
                 }
